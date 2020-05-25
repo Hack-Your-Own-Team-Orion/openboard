@@ -2,13 +2,31 @@ import React, { Component } from "react";
 import LoadingScreen from "./components/loadingScreen";
 
 type ApplicationProps = {};
-type ApplicationState = {};
+type ApplicationState = {
+    fadeOutLoadingScreen: boolean
+};
 
 export default class Application extends Component<ApplicationProps, ApplicationState> {
+    constructor(props: ApplicationProps) {
+        super(props);
+
+        this.state = {
+            fadeOutLoadingScreen: false
+        }
+    }
+
+    componentDidMount() {
+        setTimeout(() => {
+            this.setState({
+                fadeOutLoadingScreen: true
+            })
+        }, 500);
+    }
+
     render(): React.ReactNode {
         return (
             <>
-                <LoadingScreen />
+                <LoadingScreen shouldFadeOut={this.state.fadeOutLoadingScreen} />
                 <h1>Hack Your Own - Team Orion</h1>
                 <p>File Format:</p>
                 <ul>
