@@ -6,7 +6,8 @@ type LoadingScreenProps = {
     shouldFadeOut: boolean
 };
 type LoadingScreenState = {
-    isFadingOut: boolean
+    isFadingOut: boolean,
+    shouldReturnNull: boolean
 };
 
 export default class LoadingScreen extends Component<LoadingScreenProps, LoadingScreenState> {
@@ -15,7 +16,8 @@ export default class LoadingScreen extends Component<LoadingScreenProps, Loading
         super(props);
 
         this.state = {
-            isFadingOut: false
+            isFadingOut: false,
+            shouldReturnNull: false
         }
     }
 
@@ -23,18 +25,26 @@ export default class LoadingScreen extends Component<LoadingScreenProps, Loading
         if (prevProps === this.props) return;
         if (this.props.shouldFadeOut === true) {
             this.setState({
-                isFadingOut: true
+                isFadingOut: true,
             });
+            setTimeout(() => {
+                this.setState({
+                    shouldReturnNull: true
+                });
+            }, 250)
         }
     }
 
     render(): React.ReactNode {
+        if (this.state.shouldReturnNull)
+            return null;
+
         return (
             this.state.isFadingOut ? 
                 <Spring
                     from={{ opacity: 1 }}
                     to={{ opacity: 0 }}
-                    delay={500}
+                    config={{duration: 250}}
                 >
                     {props =>
                         <div className={css(styles.root)} style={props}>
@@ -55,6 +65,7 @@ export default class LoadingScreen extends Component<LoadingScreenProps, Loading
 
 const styles = StyleSheet.create({
     root: {
+        zIndex: 500,
         backgroundColor: Colors.green,
         width: "100vw",
         height: "100vh",
