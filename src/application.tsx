@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import LoadingScreen from "./components/loadingScreen";
+import Navbar from "./components/navbar";
+import Footer from "./components/footer";
 
 type ApplicationProps = {};
 type ApplicationState = {
@@ -27,6 +29,7 @@ export default class Application extends Component<ApplicationProps, Application
         return (
             <>
                 <LoadingScreen shouldFadeOut={this.state.fadeOutLoadingScreen} />
+                <Navbar />
                 <h1>Hack Your Own - Team Orion</h1>
                 <p>File Format:</p>
                 <ul>
@@ -36,6 +39,7 @@ export default class Application extends Component<ApplicationProps, Application
                     <li>src/localFunctions - functions that don't require a cloud service</li>
                     <li>functions/ - Firebase Functions</li>
                 </ul>
+                <Footer />
             </>
         );
     }
