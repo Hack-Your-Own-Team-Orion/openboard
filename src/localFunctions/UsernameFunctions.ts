@@ -41,6 +41,10 @@ export function colorFromUsername(username: string): string {
     return colors[hash];
 }
 
+export function condensedUsername(username: string): string {
+    return username.substr(0, 4) + '...' + username.substring(username.length - 4);
+}
+
 export default {
     usernameFromIp: usernameFromIp,
     colorFromUsername: colorFromUsername
