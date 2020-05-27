@@ -11,7 +11,7 @@ export default class Navbar extends Component<NavbarProps, NavbarState> {
             <nav className={css(styles.root)}>
                 <div className={css(styles.inner)}>
                     <img src={process.env.PUBLIC_URL + "/Logo.svg"} alt="OpenBoard" height="32px" className={css(styles.brandLogo)}/>
-                    <a href="#" className={css(styles.brandTitle)}><span className={css(styles.brandTitleBolded)}>Open</span>Board</a>
+                    <a href="/" className={css(styles.brandTitle)}><span className={css(styles.brandTitleBolded)}>Open</span>Board</a>
                 </div>
             </nav>
         );
