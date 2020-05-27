@@ -42,7 +42,7 @@ export function colorFromUsername(username: string): string {
 }
 
 export function condensedUsername(username: string): string {
-    return username.substr(0, 4) + '...' + username.substring(28, 32);
+    return username.substr(0, 4) + '...' + username.substring(username.length - 4);
 }
 
 export default {

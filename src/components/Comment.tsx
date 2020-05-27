@@ -11,10 +11,9 @@ const Comment:FunctionComponent<Reply | Thread> = ({title, userhash, content, co
     const [showReplies, setShowReplies] = React.useState(false);
     const [username, setUsername] = React.useState(miniUsername);
 
-
     const styles = StyleSheet.create({
         commentGrid: {
-            fontFamily: "Open Sans",
+            fontFamily: "'Open Sans', sans-serif",
             display: "grid",
             backgroundColor: "white",
             gridTemplateRows: "auto auto auto",
@@ -41,12 +40,15 @@ const Comment:FunctionComponent<Reply | Thread> = ({title, userhash, content, co
             backgroundColor: color,
             borderRadius: "2px",
             border: `2px solid ${color}`,
+            fontWeight: 600,
             boxSizing: "border-box",
             color: "white",
             marginRight: "0.2rem",
         },
         unfilledButton: {
             color: "#494949",
+            fontWeight: 600,
+            opacity: 0.9,
             background: "none",
             fontSize: "1rem"
         }
