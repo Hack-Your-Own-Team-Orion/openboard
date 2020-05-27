@@ -1,3 +1,4 @@
+
 import React, { FunctionComponent } from "react";
 import { css, StyleSheet } from "aphrodite";
 import { Reply, Thread } from '../interface';
@@ -5,7 +6,7 @@ import { condensedUsername } from '../localFunctions/UsernameFunctions';
 import ReplyModal from "./ReplyModal";
 
 // TODO Condense subreplies if too many...
-// TODO onClickReply() send focus to the textarea || create small input field under thread?
+
 
 const Comment: FunctionComponent<Reply | Thread> = ({ title, userhash, content, color, replies, id, level }) => {
     const miniUsername = condensedUsername(userhash);
@@ -21,6 +22,7 @@ const Comment: FunctionComponent<Reply | Thread> = ({ title, userhash, content, 
             gridTemplateRows: "auto auto auto",
             borderLeft: `0.3rem solid ${color}`,
             borderBottom: `1px solid #F2F2F2`,
+
             padding: "0rem 0px 0.5rem 0.5rem",
             marginLeft: `calc(${level} * 0.5rem)`,
         },
@@ -100,6 +102,7 @@ const Comment: FunctionComponent<Reply | Thread> = ({ title, userhash, content, 
                     hideSelf={() => setShowingReplyModal(false)} 
                     _key={id}
                     />
+
                 )
             }
         </>
