@@ -40,7 +40,7 @@ export default class Footer extends Component<FooterProps, FooterState> {
                     id="currentInput"
                     autoCorrect="false"
                     className={css(styles.textArea)}
-                    placeholder={"Write a Comment"}
+                    placeholder={"Write a new Thread"}
                     onChange={this.onInputChange}
                 ></textarea>
                 <button className={css(styles.button)} onClick={this.handleSubmit}>Submit</button>
@@ -51,6 +51,7 @@ export default class Footer extends Component<FooterProps, FooterState> {
 
 const styles = StyleSheet.create({
     root: {
+        backgroundColor: "#F2F2F2",
         position: "fixed",
         bottom: "0",
         width: "100vw",

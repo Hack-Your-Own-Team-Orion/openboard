@@ -11,7 +11,7 @@ export default class Navbar extends Component<NavbarProps, NavbarState> {
             <nav className={css(styles.root)}>
                 <div className={css(styles.inner)}>
                     <img src={process.env.PUBLIC_URL + "/Logo.svg"} alt="OpenBoard" height="32px" className={css(styles.brandLogo)}/>
-                    <a href="#" className={css(styles.brandTitle)}><span className={css(styles.brandTitleBolded)}>Open</span>Board</a>
+                    <a href="/" className={css(styles.brandTitle)}><span className={css(styles.brandTitleBolded)}>Open</span>Board</a>
                 </div>
             </nav>
         );
@@ -20,6 +20,7 @@ export default class Navbar extends Component<NavbarProps, NavbarState> {
 
 const styles: any = StyleSheet.create({
     root: {
+        zIndex: 5,
         width: "100%",
         height: "60px",
         backgroundColor: Colors.green,
@@ -27,7 +28,9 @@ const styles: any = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        position: "sticky"
+        position: "sticky",
+        left: 0,
+        top: 0
     },
 
     inner: {
