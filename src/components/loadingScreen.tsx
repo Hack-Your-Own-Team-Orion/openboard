@@ -67,13 +67,15 @@ const styles = StyleSheet.create({
     root: {
         zIndex: 500,
         backgroundColor: Colors.green,
-        width: "100vw",
+        width: "100%",
         height: "100vh",
-        position: "fixed",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        position: "sticky",
+        left: 0,
+        top: 0
     },
 
     brand: {

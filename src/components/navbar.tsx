@@ -20,6 +20,7 @@ export default class Navbar extends Component<NavbarProps, NavbarState> {
 
 const styles: any = StyleSheet.create({
     root: {
+        zIndex: 5,
         width: "100%",
         height: "60px",
         backgroundColor: Colors.green,
@@ -27,7 +28,9 @@ const styles: any = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        position: "sticky"
+        position: "sticky",
+        left: 0,
+        top: 0
     },
 
     inner: {

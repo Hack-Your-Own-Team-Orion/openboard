@@ -183,6 +183,7 @@ const styles = StyleSheet.create({
     },
     internalContent: {
         width: "80%",
-        marginLeft: "10%"
+        marginLeft: "10%",
+        marginBottom: "100px"
     }
 });
