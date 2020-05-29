@@ -18,7 +18,7 @@ export default class Application extends Component<ApplicationProps, Application
         }
     }
 
-async componentDidMount() {
+    async componentDidMount() {
         let req = new XMLHttpRequest();
         req.addEventListener("load", () => {
             let lines = req.responseText.split("\n");
@@ -34,8 +34,8 @@ async componentDidMount() {
     render(): React.ReactNode {
         return (
             <>
-              <Navbar />
-              <Page collection="main" userHash={this.state.userHash} />
+                <Navbar />
+                <Page collection="pages/main" userHash={this.state.userHash} />
             </>
         );
     }

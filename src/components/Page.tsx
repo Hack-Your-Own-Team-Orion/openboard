@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { css, StyleSheet } from "aphrodite";
 import Footer from "./footer";
-import Comment from "./Comment";
 import LoadingScreen from "./loadingScreen";
 import Colors from "../colors.global";
+import { Reply } from "../interface";
+import firebase from "../firebase";
+import Comment from "./Comment";
 
 type PageProps = {
     collection: string,
@@ -11,122 +13,11 @@ type PageProps = {
 }
 
 type PageState = {
-    hasFinishedLoading: boolean
+    hasFinishedLoading: boolean,
+    data: Array<Reply>
 }
 
-const mockData = [
-    {
-        userhash: "e27fh138hfs8198de27fh138hfs8198d",
-        title: "test title!",
-        content: "First level text #1!",
-        color: "#1abc9c",
-        level: 1,
-        id: "12",
-        replies: [
-            {
-                userhash: "34j9asd34a084efa34j9asd34a084efa",
-                content: "Second level text #1!",
-                color: "#bdc3c7",
-                level: 2,
-                id: "27",
-                replies: [
-                    {
-                        userhash: "34j9asd34a084efa34j9asd34a084efa",
-                        content: "Third level text #1!",
-                        color: "#000000",
-                        level: 3,
-                        id: "29",
-                    }
-                ],
-            },
-        ],
-    },
-    {
-        userhash: "e27fh138hfs8198de27fh138hfs8198d",
-        title: "test title!",
-        content: "First level text #1!",
-        color: "#1abc9c",
-        level: 1,
-        id: "12",
-        replies: [
-            {
-                userhash: "34j9asd34a084efa34j9asd34a084efa",
-                content: "Second level text #1!",
-                color: "#bdc3c7",
-                level: 2,
-                id: "27",
-                replies: [
-                    {
-                        userhash: "34j9asd34a084efa34j9asd34a084efa",
-                        content: "Third level text #1!",
-                        color: "#000000",
-                        level: 3,
-                        id: "29",
-                    }
-                ],
-            },
-        ],
-    },
-    {
-        userhash: "e27fh138hfs8198de27fh138hfs8198d",
-        title: "test title!",
-        content: "First level text #1!",
-        color: "#1abc9c",
-        level: 1,
-        id: "12",
-        replies: [
-            {
-                userhash: "34j9asd34a084efa34j9asd34a084efa",
-                content: "Second level text #1!",
-                color: "#bdc3c7",
-                level: 2,
-                id: "27",
-                replies: [
-                    {
-                        userhash: "34j9asd34a084efa34j9asd34a084efa",
-                        content: "Third level text #1!",
-                        color: "#000000",
-                        level: 3,
-                        id: "29",
-                    }
-                ],
-            },
-        ],
-    },
-    {
-        userhash: "e27fh138hfs8198de27fh138hfs8198d",
-        title: "test title!",
-        content: "First level text #1!",
-        color: "#1abc9c",
-        level: 1,
-        id: "12",
-        replies: [
-            {
-                userhash: "34j9asd34a084efa34j9asd34a084efa",
-                content: "Second level text #1!",
-                color: "#bdc3c7",
-                level: 2,
-                id: "27",
-                replies: [
-                    {
-                        userhash: "34j9asd34a084efa34j9asd34a084efa",
-                        content: "Third level text #1!",
-                        color: "#000000",
-                        level: 3,
-                        id: "29",
-                    }
-                ],
-            },
-        ],
-    },
-    {
-        userhash: "fa87ah72g21sash2fa87ah72g21sash2",
-        content: "First level text #2!",
-        color: "#27ae60",
-        level: 1,
-        id: "13",
-    },
-];
+const firestore = firebase.firestore();
 
 export default class Page extends Component<PageProps, PageState> {
 
@@ -134,16 +25,29 @@ export default class Page extends Component<PageProps, PageState> {
         super(props);
 
         this.state = {
-            hasFinishedLoading: false
+            hasFinishedLoading: false,
+            data: Array<Reply>()
         }
+
+        this.finishLoading = this.finishLoading.bind(this);
     }
 
-    componentDidMount(): void {
+    async componentDidMount(): Promise<void> {
+        let document = firestore.doc(this.props.collection);
+        let data = (await document.get()).data();
+        let threads: Array<Reply> = data.threads;
+        this.setState({
+            data: threads
+        });
+        this.finishLoading();
+    }
+
+    finishLoading(): void {
         setTimeout(() => {
             this.setState({
                 hasFinishedLoading: true
             })
-        }, 250);
+        }, 100);
     }
 
     render(): React.ReactNode {
@@ -152,12 +56,15 @@ export default class Page extends Component<PageProps, PageState> {
                 <LoadingScreen shouldFadeOut={this.state.hasFinishedLoading} />
 
                 <div className={css(styles.title)}>
-                    <h1>Welcome to /{this.props.collection}, &lt;{this.props.userHash}&gt;</h1>
+                    <h1>Welcome to /{this.props.collection.slice(6)}, &lt;{this.props.userHash}&gt;</h1>
+                    {JSON.stringify(this.state.data) === "[]" && (
+                        <h3 className={css(styles.subtitle)}>This page is empty. Fill the void by starting a thread at the bottom of the page!</h3>
+                    )}
                 </div>
 
 
                 <div className={css(styles.internalContent)}>
-                    {mockData.map((reply) => {
+                    {this.state.data.map((reply: Reply) => {
                         return <Comment
                             id={reply.id}
                             title={reply.title}
@@ -169,7 +76,7 @@ export default class Page extends Component<PageProps, PageState> {
                             level={1} />
                     })}
                 </div>
-                <Footer />
+                <Footer userHash={this.props.userHash} page={this.props.collection} />
             </>
         );
     }
@@ -185,5 +92,9 @@ const styles = StyleSheet.create({
         width: "80%",
         marginLeft: "10%",
         marginBottom: "100px"
+    },
+
+    subtitle: {
+        marginTop: "20px"
     }
 });
