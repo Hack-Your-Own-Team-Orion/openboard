@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 import { css, StyleSheet } from "aphrodite";
 import Colors from "../colors.global";
 
-type NavbarProps = {};
-type NavbarState = {};
+interface NavbarProps {}
+interface NavbarState {}
 
 export default class Navbar extends Component<NavbarProps, NavbarState> {
     render(): React.ReactNode {
@@ -30,7 +30,7 @@ const styles: any = StyleSheet.create({
         justifyContent: "center",
         position: "sticky",
         left: 0,
-        top: 0
+        top: 0,
     },
 
     inner: {
@@ -39,7 +39,7 @@ const styles: any = StyleSheet.create({
         display: "flex",
         alignItems: "center",
     },
-    
+
     brandLogo: {
         display: "block",
         paddingRight: "10px",
@@ -49,10 +49,10 @@ const styles: any = StyleSheet.create({
         fontFamily: "'Ubuntu', sans-serif",
         textDecoration: "none",
         color: "#FFF",
-        fontSize: "1.25em"
+        fontSize: "1.25em",
     },
 
     brandTitleBolded: {
-        fontWeight: 700
-    }
+        fontWeight: 700,
+    },
 });

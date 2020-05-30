@@ -1,21 +1,23 @@
 export default class Queue {
-    arr: Array<any>
+    arr: any[];
 
     constructor() {
         this.arr = [];
     }
 
-    isEmpty() {
-        return this.arr.length === 0
+    isEmpty(): boolean {
+        return this.arr.length === 0;
     }
 
-    enqueue(b: any) {
+    enqueue(b: any): any {
         this.arr.push(b);
     }
 
-    dequeue() {
+    dequeue(): any | null {
         if (this.arr.length !== 0) {
             return this.arr.pop();
+        } else {
+            return null;
         }
     }
 }

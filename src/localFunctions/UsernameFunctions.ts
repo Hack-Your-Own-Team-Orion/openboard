@@ -1,4 +1,4 @@
-import { sha256 } from "js-sha256"
+import { sha256 } from "js-sha256";
 
 export function usernameFromIp(ip: string): string {
     let hash: string = sha256(ip);
@@ -9,7 +9,7 @@ export function usernameFromIp(ip: string): string {
 }
 
 export function colorFromUsername(username: string): string {
-    let colors: Array<string> = [
+    const colors: string[] = [
         "#1abc9c",
         "#2ecc71",
         "#3498db",
@@ -29,11 +29,11 @@ export function colorFromUsername(username: string): string {
         "#d35400",
         "#c0392b",
         "#bdc3c7",
-        "#7f8c8d"
+        "#7f8c8d",
     ];
-    let hash: number = 0;
-    if (username.length === 0) return "#1abc9c"; // return default color
-    for (let i: number = 0; i < username.length; i++) {
+    let hash = 0;
+    if (username.length === 0) { return "#1abc9c"; } // return default color
+    for (let i = 0; i < username.length; i++) {
         hash = username.charCodeAt(i) + ((hash << 5) - hash);
         hash = hash & hash;
     }
@@ -42,10 +42,10 @@ export function colorFromUsername(username: string): string {
 }
 
 export function condensedUsername(username: string): string {
-    return username.substr(0, 4) + '...' + username.substring(username.length - 4);
+    return username.substr(0, 4) + "..." + username.substring(username.length - 4);
 }
 
 export default {
-    usernameFromIp: usernameFromIp,
-    colorFromUsername: colorFromUsername
-}
+    usernameFromIp,
+    colorFromUsername,
+};

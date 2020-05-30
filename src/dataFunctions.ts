@@ -5,57 +5,59 @@ import Queue from "./queue";
 const firestore = firebase.firestore();
 
 export async function addThread(page: string, threadData: Reply | Thread): Promise<void> {
-    let doc = firestore.doc(page);
-    let currentData = (await doc.get()).data();
+    const doc = firestore.doc(page);
+    const currentData = (await doc.get()).data();
     console.log(currentData);
-    let newThreads = [
+    const newThreads = [
         ...currentData.threads,
-        threadData
-    ]
+        threadData,
+    ];
 
     doc.update({
-        threads: newThreads
+        threads: newThreads,
     });
 }
 
-function addCommentToThread(page: any, insertAt: string, newReply: Reply) {
-    let threads = page.threads;
-    let q = new Queue();
-    for (let i = 0; i < threads.length; i++) {
-        q.enqueue(threads[i]);
+interface ThreadData {
+    threads: Reply[];
+}
+
+function addCommentToThread(page: any, insertAt: string, newReply: Reply): ThreadData {
+    const threads = page.threads;
+    const q = new Queue();
+    for (const thread of threads) {
+        q.enqueue(thread);
     }
 
     while (!q.isEmpty()) {
-        let current: Reply = q.dequeue();
+        const current: Reply = q.dequeue();
 
         if (current.id === insertAt) {
             if (!current.hasOwnProperty("replies")) {
                 current.replies = [];
             }
             current.replies.push(newReply);
-            alert(`Broke @ ${current.id}, should have inserted :)`)
+            alert(`Broke @ ${current.id}, should have inserted :)`);
             break;
         } else {
             if (current.hasOwnProperty("replies")) {
-                for (let i = 0; i < current.replies.length; i++) {
-                    q.enqueue(current.replies[i]);
+                for (const reply of current.replies) {
+                    q.enqueue(reply);
                 }
             }
         }
     }
     return {
-        threads: threads
-    }
+        threads,
+    };
 }
 
 export async function addReply(page: string, id: string, newReply: Reply): Promise<void> {
-    let doc = firestore.doc(page);
-    let currentData = (await doc.get()).data();
-    let newData = addCommentToThread(currentData, id, newReply);
+    const doc = firestore.doc(page);
+    const currentData = (await doc.get()).data();
+    const newData = addCommentToThread(currentData, id, newReply);
 
-    console.log(newData.threads);
-    
     await doc.set({
-        threads: newData.threads
+        threads: newData.threads,
     });
 }

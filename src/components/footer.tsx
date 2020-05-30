@@ -6,14 +6,14 @@ import { colorFromUsername } from "../localFunctions/UsernameFunctions";
 import { v4 as uuidv4 } from "uuid";
 import { addThread } from "../dataFunctions";
 
-type FooterProps = {
-    userHash: string,
-    page: string,
-    requestRefresh: Function
+interface FooterProps {
+    userHash: string;
+    page: string;
+    requestRefresh: () => void;
 }
-type FooterState = {
-    currentInput: string,
-    currentTitleInput: string
+interface FooterState {
+    currentInput: string;
+    currentTitleInput: string;
 }
 
 export default class Footer extends Component<FooterProps, FooterState> {
@@ -23,7 +23,7 @@ export default class Footer extends Component<FooterProps, FooterState> {
 
         this.state = {
             currentInput: "",
-            currentTitleInput: ""
+            currentTitleInput: "",
         };
 
         this.handleSubmit  = this.handleSubmit.bind(this);
@@ -33,12 +33,12 @@ export default class Footer extends Component<FooterProps, FooterState> {
     onInputChange(e: any): void {
         this.setState({
             ...this.state,
-            [e.target.id]: e.target.value
-        })
+            [e.target.id]: e.target.value,
+        });
     }
 
     async handleSubmit(): Promise<void> {
-        let newThread: Thread = {
+        const newThread: Thread = {
             id: uuidv4(),
             title: this.state.currentTitleInput,
             content: this.state.currentInput,
@@ -46,7 +46,7 @@ export default class Footer extends Component<FooterProps, FooterState> {
             color: colorFromUsername(this.props.userHash),
             replies: [],
             level: 1,
-        }
+        };
         await addThread(this.props.page, newThread);
         this.props.requestRefresh();
     }
@@ -70,7 +70,7 @@ export default class Footer extends Component<FooterProps, FooterState> {
                         className={css(styles.textArea)}
                         placeholder="New Thread's content"
                         onChange={this.onInputChange}
-                    ></textarea>
+                    />
                 </div>
                 <button className={css(styles.button)} onClick={this.handleSubmit}>Submit</button>
             </div>
@@ -96,12 +96,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
 
         ":hover": {
-            height: "180px"
+            height: "180px",
         },
 
         ":active": {
-            height: "180px"
-        }
+            height: "180px",
+        },
     },
 
     textArea: {
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
         width: "90%",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center"
+        justifyContent: "center",
     },
 
     titleInput: {
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
         border: `1px solid ${"#BABABA"}`,
         width: "100%",
         fontFamily: "'Open Sans'",
-        marginBottom: "5px"
+        marginBottom: "5px",
     },
 
     button: {
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
 
         ":hover": {
             transform: "translateY(-2px) scale(1.05)",
-            scale: "scale(1.1)"
+            scale: "scale(1.1)",
         },
-    }
+    },
 });

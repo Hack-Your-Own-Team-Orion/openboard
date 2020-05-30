@@ -4,27 +4,27 @@ import Navbar from "./components/navbar";
 import Page from "./components/Page";
 import { usernameFromIp } from "./localFunctions/UsernameFunctions";
 
-type ApplicationProps = {};
-type ApplicationState = {
-    userHash: string
-};
+interface ApplicationProps {}
+interface ApplicationState {
+    userHash: string;
+}
 
 export default class Application extends Component<ApplicationProps, ApplicationState> {
     constructor(props: ApplicationProps) {
         super(props);
 
         this.state = {
-            userHash: "<user_hash>"
-        }
+            userHash: "<user_hash>",
+        };
     }
 
-    async componentDidMount() {
-        let req = new XMLHttpRequest();
-        req.addEventListener("load", () => {
-            let lines = req.responseText.split("\n");
-            let ip = lines[2].slice(3);
+    async componentDidMount(): Promise<void> {
+        const req = new XMLHttpRequest();
+        req.addEventListener("load", (): void => {
+            const lines = req.responseText.split("\n");
+            const ip = lines[2].slice(3);
             this.setState({
-                userHash: usernameFromIp(ip)
+                userHash: usernameFromIp(ip),
             });
         });
         req.open("GET", "https://www.cloudflare.com/cdn-cgi/trace");

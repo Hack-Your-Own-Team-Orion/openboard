@@ -1,14 +1,14 @@
 import React, { Component } from "react";
-import { css, StyleSheet } from "aphrodite"
+import { css, StyleSheet } from "aphrodite";
 import { Spring } from "react-spring/renderprops";
 import Colors from "../colors.global";
-type LoadingScreenProps = {
-    shouldFadeOut: boolean
-};
-type LoadingScreenState = {
-    isFadingOut: boolean,
-    shouldReturnNull: boolean
-};
+interface LoadingScreenProps {
+    shouldFadeOut: boolean;
+}
+interface LoadingScreenState {
+    isFadingOut: boolean;
+    shouldReturnNull: boolean;
+}
 
 export default class LoadingScreen extends Component<LoadingScreenProps, LoadingScreenState> {
 
@@ -17,36 +17,37 @@ export default class LoadingScreen extends Component<LoadingScreenProps, Loading
 
         this.state = {
             isFadingOut: false,
-            shouldReturnNull: false
-        }
+            shouldReturnNull: false,
+        };
     }
 
     componentDidUpdate(prevProps: LoadingScreenProps): void {
-        if (prevProps === this.props) return;
+        if (prevProps === this.props) { return; }
         if (this.props.shouldFadeOut === true) {
             this.setState({
                 isFadingOut: true,
             });
-            setTimeout(() => {
+            setTimeout((): void => {
                 this.setState({
-                    shouldReturnNull: true
+                    shouldReturnNull: true,
                 });
-            }, 250)
+            }, 250);
         }
     }
 
     render(): React.ReactNode {
-        if (this.state.shouldReturnNull)
+        if (this.state.shouldReturnNull) {
             return null;
+        }
 
         return (
-            this.state.isFadingOut ? 
+            this.state.isFadingOut ?
                 <Spring
                     from={{ opacity: 1 }}
                     to={{ opacity: 0 }}
                     config={{duration: 250}}
                 >
-                    {props =>
+                    {(props: object): React.ReactNode =>
                         <div className={css(styles.root)} style={props}>
                             <img src={process.env.PUBLIC_URL + "/Logo.svg"} alt="OpenBoard" height="64px"/>
                             <p className={css(styles.brand)}><span className={css(styles.brandBolded)}>Open</span>Board</p>
@@ -75,16 +76,16 @@ const styles = StyleSheet.create({
         alignItems: "center",
         position: "sticky",
         left: 0,
-        top: 0
+        top: 0,
     },
 
     brand: {
         color: "#FFF",
         fontFamily: "Ubuntu, sans-serif",
-        fontSize: "2.2em"
+        fontSize: "2.2em",
     },
 
     brandBolded: {
-        fontWeight: 700
-    }
+        fontWeight: 700,
+    },
 });
