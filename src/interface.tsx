@@ -15,7 +15,7 @@ export interface Reply {
     userhash: string,
     content: string,
     color: string,
-    replies?: ReadonlyArray<Reply>,
+    replies?: Array<Reply>,
     id: string,
     level?: number
 }
@@ -25,7 +25,7 @@ export interface Thread {
     userhash: string,
     content: string,
     color: string,
-    replies?: ReadonlyArray<Reply>,
+    replies?: Array<Reply>,
     id: string,
     level?: number
 }

@@ -29,17 +29,22 @@ export default class Page extends Component<PageProps, PageState> {
             data: Array<Reply>()
         }
 
-        this.finishLoading = this.finishLoading.bind(this);
+        this.finishLoading  = this.finishLoading.bind(this);
+        this.requestRefresh = this.requestRefresh.bind(this);
     }
 
     async componentDidMount(): Promise<void> {
+        this.requestRefresh();
+        this.finishLoading();
+    }
+
+    async requestRefresh(): Promise<void> {
         let document = firestore.doc(this.props.collection);
         let data = (await document.get()).data();
         let threads: Array<Reply> = data.threads;
         this.setState({
             data: threads
         });
-        this.finishLoading();
     }
 
     finishLoading(): void {
@@ -76,7 +81,7 @@ export default class Page extends Component<PageProps, PageState> {
                             level={1} />
                     })}
                 </div>
-                <Footer userHash={this.props.userHash} page={this.props.collection} />
+                <Footer userHash={this.props.userHash} page={this.props.collection} requestRefresh={this.requestRefresh} />
             </>
         );
     }

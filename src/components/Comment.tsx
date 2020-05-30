@@ -5,9 +5,6 @@ import { Reply, Thread } from '../interface';
 import { condensedUsername } from '../localFunctions/UsernameFunctions';
 import ReplyModal from "./ReplyModal";
 
-// TODO Condense subreplies if too many...
-
-
 const Comment: FunctionComponent<Reply | Thread> = ({ title, userhash, content, color, replies, id, level }) => {
     const miniUsername = condensedUsername(userhash);
     const [showReplies, setShowReplies] = React.useState(level < 5 ? true : false);
@@ -98,9 +95,10 @@ const Comment: FunctionComponent<Reply | Thread> = ({ title, userhash, content, 
             {
                 showingReplyModal && (
                     <ReplyModal
-                    title={title || content}
-                    hideSelf={() => setShowingReplyModal(false)} 
-                    _key={id}
+                        title={title || content}
+                        hideSelf={() => setShowingReplyModal(false)} 
+                        _key={id}
+                        level={level}
                     />
 
                 )

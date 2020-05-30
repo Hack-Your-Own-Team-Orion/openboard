@@ -1,14 +1,19 @@
 import React, { Component } from "react";
 import { css, StyleSheet } from "aphrodite";
 import Colors from "../colors.global";
+import { Reply } from "../interface";
+import { v4 as uuidv4 } from "uuid";
+import { usernameFromIp, colorFromUsername } from "../localFunctions/UsernameFunctions";
+import { addReply } from "../dataFunctions";
 
 type ReplyModalProps = {
     _key: string,
     title: string,
+    level: number
     hideSelf: Function
 };
 type ReplyModalState = {
-    replyInput: string
+    replyInput: string,
 };
 
 export default class ReplyModal extends Component<ReplyModalProps, ReplyModalState> {
@@ -30,13 +35,25 @@ export default class ReplyModal extends Component<ReplyModalProps, ReplyModalSta
     }
 
     handleSubmit(): void {
-        let data: Object = {
-            key: this.props._key,
-            input: {
-                ...this.state
+        let req = new XMLHttpRequest();
+        req.addEventListener("load", async () => {
+            let lines = req.responseText.split("\n");
+            let ip = lines[2].slice(3);            
+            let userHash: string = usernameFromIp(ip);
+
+            let newReply: Reply = {
+                id: uuidv4(),
+                content: this.state.replyInput,
+                userhash: userHash,
+                color: colorFromUsername(userHash),
+                replies: [],
+                level: this.props.level + 1,
             }
-        }
-        alert("Attempted reply-submit with data:\n"+JSON.stringify(data));
+            await addReply("/pages/main", this.props._key, newReply);
+            window.location.reload(true);
+        });
+        req.open("GET", "https://www.cloudflare.com/cdn-cgi/trace");
+        req.send();
     }
 
     onInputChange(e: any): void {

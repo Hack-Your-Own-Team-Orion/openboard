@@ -9,6 +9,7 @@ import { addThread } from "../dataFunctions";
 type FooterProps = {
     userHash: string,
     page: string,
+    requestRefresh: Function
 }
 type FooterState = {
     currentInput: string,
@@ -36,7 +37,6 @@ export default class Footer extends Component<FooterProps, FooterState> {
         })
     }
 
-
     async handleSubmit(): Promise<void> {
         let newThread: Thread = {
             id: uuidv4(),
@@ -48,8 +48,7 @@ export default class Footer extends Component<FooterProps, FooterState> {
             level: 1,
         }
         await addThread(this.props.page, newThread);
-        alert("Success!");
-        window.location.reload(false);
+        this.props.requestRefresh();
     }
 
     render(): React.ReactNode {
