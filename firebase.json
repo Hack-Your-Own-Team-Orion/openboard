@@ -10,6 +10,7 @@
     ]
   },
   "hosting": {
+    "site": "openboard-hyo",
     "public": "build",
     "ignore": [
       "firebase.json",

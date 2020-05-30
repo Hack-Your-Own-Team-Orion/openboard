@@ -1,15 +1,20 @@
 import React, { Component } from "react";
 import { css, StyleSheet } from "aphrodite";
 import Colors from "../colors.global";
+import { Reply } from "../interface";
+import { v4 as uuidv4 } from "uuid";
+import { usernameFromIp, colorFromUsername } from "../localFunctions/UsernameFunctions";
+import { addReply } from "../dataFunctions";
 
-type ReplyModalProps = {
-    _key: string,
-    title: string,
-    hideSelf: Function
-};
-type ReplyModalState = {
-    replyInput: string
-};
+interface ReplyModalProps {
+    _key: string;
+    title: string;
+    level: number;
+    hideSelf: () => void;
+}
+interface ReplyModalState {
+    replyInput: string;
+}
 
 export default class ReplyModal extends Component<ReplyModalProps, ReplyModalState> {
 
@@ -17,8 +22,8 @@ export default class ReplyModal extends Component<ReplyModalProps, ReplyModalSta
         super(props);
 
         this.state = {
-            replyInput: ""
-        }
+            replyInput: "",
+        };
 
         this.hideSelf = this.hideSelf.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
@@ -30,20 +35,32 @@ export default class ReplyModal extends Component<ReplyModalProps, ReplyModalSta
     }
 
     handleSubmit(): void {
-        let data: Object = {
-            key: this.props._key,
-            input: {
-                ...this.state
-            }
-        }
-        alert("Attempted reply-submit with data:\n"+JSON.stringify(data));
+        const req = new XMLHttpRequest();
+        req.addEventListener("load", async (): Promise<void> => {
+            const lines = req.responseText.split("\n");
+            const ip = lines[2].slice(3);
+            const userHash: string = usernameFromIp(ip);
+
+            const newReply: Reply = {
+                id: uuidv4(),
+                content: this.state.replyInput,
+                userhash: userHash,
+                color: colorFromUsername(userHash),
+                replies: [],
+                level: this.props.level + 1,
+            };
+            await addReply("/pages/main", this.props._key, newReply);
+            window.location.reload(true);
+        });
+        req.open("GET", "https://www.cloudflare.com/cdn-cgi/trace");
+        req.send();
     }
 
     onInputChange(e: any): void {
         this.setState({
             ...this.state,
-            [e.target.id]: e.target.value
-        })
+            [e.target.id]: e.target.value,
+        });
     }
 
     render(): React.ReactNode {
@@ -83,7 +100,7 @@ const styles = StyleSheet.create({
         padding: "20px",
         border: `2px solid ${Colors.green}`,
 
-        fontFamily: "'Ubuntu', sans-serif"
+        fontFamily: "'Ubuntu', sans-serif",
     },
 
     topBar: {
@@ -95,7 +112,7 @@ const styles = StyleSheet.create({
 
     closeButton: {
         textDecoration: "underline",
-        cursor: "pointer"
+        cursor: "pointer",
     },
 
     submitButton: {
@@ -109,8 +126,8 @@ const styles = StyleSheet.create({
 
         ":hover": {
             transform: "translateY(-2px) scale(1.05)",
-            scale: "scale(1.1)"
-        }
+            scale: "scale(1.1)",
+        },
     },
 
     textArea: {
@@ -122,5 +139,5 @@ const styles = StyleSheet.create({
         padding: "10px",
         border: `1px solid ${"#BABABA"}`,
         whiteSpace: "normal",
-    }
+    },
 });
