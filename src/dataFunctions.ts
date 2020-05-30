@@ -7,7 +7,6 @@ const firestore = firebase.firestore();
 export async function addThread(page: string, threadData: Reply | Thread): Promise<void> {
     const doc = firestore.doc(page);
     const currentData = (await doc.get()).data();
-    console.log(currentData);
     const newThreads = [
         ...currentData.threads,
         threadData,
@@ -37,7 +36,6 @@ function addCommentToThread(page: any, insertAt: string, newReply: Reply): Threa
                 current.replies = [];
             }
             current.replies.push(newReply);
-            alert(`Broke @ ${current.id}, should have inserted :)`);
             break;
         } else {
             if (current.hasOwnProperty("replies")) {
