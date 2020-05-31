@@ -17,7 +17,6 @@ interface FooterState {
 }
 
 export default class Footer extends Component<FooterProps, FooterState> {
-
     constructor(props: FooterProps) {
         super(props);
 
@@ -26,7 +25,7 @@ export default class Footer extends Component<FooterProps, FooterState> {
             currentTitleInput: "",
         };
 
-        this.handleSubmit  = this.handleSubmit.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
     }
 
@@ -48,52 +47,52 @@ export default class Footer extends Component<FooterProps, FooterState> {
             level: 1,
         };
         await addThread(this.props.page, newThread);
-        this.props.requestRefresh();
+        await this.props.requestRefresh();
     }
 
     render(): React.ReactNode {
         return (
-            <div className={css(styles.root)}>
-                <div className={css(styles.inputs)}>
-                    <input
-                        type="text"
-                        name="currentTitleInput"
-                        id="currentTitleInput"
-                        className={css(styles.titleInput)}
-                        placeholder="Write a new Thread - Title"
-                        onChange={this.onInputChange}
-                    />
-                    <textarea
-                        name="currentInput"
-                        id="currentInput"
-                        autoCorrect="false"
-                        className={css(styles.textArea)}
-                        placeholder="New Thread's content"
-                        onChange={this.onInputChange}
-                    />
+            <div className={css(styles.rootContainer)}>
+                <div className={css(styles.root)}>
+                    <div className={css(styles.inputs)}>
+                        <input
+                            type="text"
+                            name="currentTitleInput"
+                            id="currentTitleInput"
+                            className={css(styles.titleInput)}
+                            placeholder="Write a new Thread - Title"
+                            onChange={this.onInputChange}
+                        />
+                        <textarea
+                            name="currentInput"
+                            id="currentInput"
+                            autoCorrect="false"
+                            className={css(styles.textArea)}
+                            placeholder="New Thread's content"
+                            onChange={this.onInputChange}
+                        />
+                    </div>
+                    <div className={css(styles.buttons)}>
+                        <button className={css(styles.button)} onClick={this.handleSubmit}>
+                            Submit
+                        </button>
+                    </div>
                 </div>
-                <button className={css(styles.button)} onClick={this.handleSubmit}>Submit</button>
             </div>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    root: {
-        backgroundColor: "#F2F2F2",
+    rootContainer: {
         position: "fixed",
         bottom: "0",
-        width: "100vw",
-        textAlign: "center",
-        height: "80px",
+        left: "0",
+        right: "0",
         borderTop: `3px solid ${Colors.green}`,
-        transition: "all .1s ease-in-out",
-        fontFamily: "'Ubuntu', sans-serif",
-
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
+        backgroundColor: "#F2F2F2",
+        height: "110px",
+        transition: "height .1s ease-in-out",
 
         ":hover": {
             height: "180px",
@@ -104,36 +103,54 @@ const styles = StyleSheet.create({
         },
     },
 
+    root: {
+        margin: "0 auto",
+        maxWidth: "1140px",
+        width: "100%",
+        textAlign: "center",
+        height: "100%",
+        transition: "all .1s ease-in-out",
+        fontFamily: "'Ubuntu', sans-serif",
+
+        display: "flex",
+    },
+
     textArea: {
+        padding: "4px",
         resize: "none",
         borderRadius: 5,
         border: `1px solid ${"#BABABA"}`,
         whiteSpace: "normal",
-        width: "100%",
-        flex: 1,
+        flex: "1 0 auto",
         fontFamily: "'Open Sans'",
     },
 
     inputs: {
-        height: "80%",
-        width: "90%",
+        height: "100%",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
+        flex: "1 0 auto",
+        padding: "16px",
     },
 
     titleInput: {
+        padding: "4px",
         borderRadius: 5,
         border: `1px solid ${"#BABABA"}`,
-        width: "100%",
         fontFamily: "'Open Sans'",
         marginBottom: "5px",
+    },
+
+    buttons: {
+        height: "100%",
+        paddingRight: "16px",
+        display: "flex",
+        alignItems: "center",
     },
 
     button: {
         border: `2px solid ${Colors.green}`,
         color: Colors.green,
-        marginLeft: "10px",
         cursor: "pointer",
         borderRadius: 5,
         padding: "5px 10px",
