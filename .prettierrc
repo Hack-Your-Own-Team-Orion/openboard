@@ -1,10 +1,10 @@
 {
-  "printWidth": 140,
-  "tabWidth": 4,
-  "singleQuote": false,
-  "trailingComma": "es5",
-  "semi": true,
-  "newline-before-return": true,
-  "no-duplicate-variable": [true, "check-parameters"],
-  "no-var-keyword": true
+    "printWidth": 140,
+    "tabWidth": 4,
+    "singleQuote": false,
+    "trailingComma": "all",
+    "semi": true,
+    "newline-before-return": true,
+    "no-duplicate-variable": [true, "check-parameters"],
+    "no-var-keyword": true
 }
