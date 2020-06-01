@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
     closeButton: {
         textDecoration: "underline",
         cursor: "pointer",
+        borderRadius: 5,
     },
 
     submitButton: {
