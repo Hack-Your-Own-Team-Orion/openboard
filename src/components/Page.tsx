@@ -58,7 +58,6 @@ export default class Page extends Component<PageProps, PageState> {
         return (
             <>
                 <LoadingScreen shouldFadeOut={this.state.hasFinishedLoading} />
-
                 <h1 className={css(styles.title)}>
                     <div className={css(styles.welcome)}>Welcome to /{this.props.collection.slice(6)},&nbsp;</div>
                     <div className={css(styles.userHashContainer)}>

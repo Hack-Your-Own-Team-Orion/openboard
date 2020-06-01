@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
         position: "fixed",
         bottom: "0",
         left: "0",
-        right: "0",
         borderTop: `3px solid ${Colors.green}`,
         backgroundColor: "#F2F2F2",
         height: "110px",
@@ -111,7 +110,6 @@ const styles = StyleSheet.create({
         height: "100%",
         transition: "all .1s ease-in-out",
         fontFamily: "'Ubuntu', sans-serif",
-
         display: "flex",
     },
 

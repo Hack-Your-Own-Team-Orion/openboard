@@ -17,7 +17,6 @@ const Comment: FunctionComponent<Reply | Thread> = (props: Reply | Thread): Reac
             gridTemplateRows: "auto auto auto",
             borderLeft: `0.3rem solid ${props.color}`,
             borderBottom: `1px solid #F2F2F2`,
-
             padding: "0.5rem",
             marginLeft: `calc(${props.level - 1} * 0.5rem)`, // Subtract 1 from level so root comment doesn't have a margin
         },
