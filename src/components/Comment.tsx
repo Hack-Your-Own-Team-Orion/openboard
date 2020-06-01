@@ -12,15 +12,14 @@ const Comment: FunctionComponent<Reply | Thread> = (props: Reply | Thread): Reac
 
     const styles = StyleSheet.create({
         commentGrid: {
-            fontFamily: "'Open Sans', sans-serif",
             display: "grid",
             backgroundColor: "white",
             gridTemplateRows: "auto auto auto",
             borderLeft: `0.3rem solid ${props.color}`,
             borderBottom: `1px solid #F2F2F2`,
 
-            padding: "0rem 0px 0.5rem 0.5rem",
-            marginLeft: `calc(${props.level} * 0.5rem)`,
+            padding: "0.5rem",
+            marginLeft: `calc(${props.level - 1} * 0.5rem)`, // Subtract 1 from level so root comment doesn't have a margin
         },
         title: {
             fontSize: "1.1rem",
@@ -67,45 +66,52 @@ const Comment: FunctionComponent<Reply | Thread> = (props: Reply | Thread): Reac
                 <p
                     onMouseEnter={(): void => setUsername(props.userhash)}
                     onMouseLeave={(): void => setUsername(miniUsername)}
-                    className={css(styles.title)}>
+                    className={css(styles.title)}
+                >
                     {(props.title ? `${props.title} ` : "") + `<${username}>`}
                 </p>
                 <div className={css(styles.content)}> {props.content} </div>
                 <div>
-                    <button className={css(styles.filledButton)} onClick={showReplyModal}>Reply</button>
-                    {!props.replies ? <span> No Replies </span> : (
-                        <button className={css(styles.unfilledButton)} onClick={(): void => setShowReplies(!showReplies)}>{showReplies ? "Hide Replies" : "Show Replies"}</button>
+                    <button className={css(styles.filledButton)} onClick={showReplyModal}>
+                        Reply
+                    </button>
+                    {!props.replies ? (
+                        <span> No Replies </span>
+                    ) : (
+                        <button className={css(styles.unfilledButton)} onClick={(): void => setShowReplies(!showReplies)}>
+                            {showReplies ? "Hide Replies" : "Show Replies"}
+                        </button>
                     )}
                 </div>
             </div>
-            {
-                props.replies && showReplies && (
-                    <div>
-                        {props.replies.map((reply: Reply): React.ReactNode => {
-                            return <Comment
-                                id={reply.id}
-                                title={reply.title}
-                                color={reply.color}
-                                content={reply.content}
-                                userhash={reply.userhash}
-                                replies={reply.replies as Reply[]}
-                                key={reply.id}
-                                level={props.level + 1} />;
-                        })}
-                    </div>
-                )
-            }
-            {
-                showingReplyModal && (
-                    <ReplyModal
-                        title={props.title || props.content}
-                        hideSelf={(): void => setShowingReplyModal(false)}
-                        _key={props.id}
-                        level={props.level}
-                    />
-
-                )
-            }
+            {props.replies && showReplies && (
+                <div>
+                    {props.replies.map(
+                        (reply: Reply): React.ReactNode => {
+                            return (
+                                <Comment
+                                    id={reply.id}
+                                    title={reply.title}
+                                    color={reply.color}
+                                    content={reply.content}
+                                    userhash={reply.userhash}
+                                    replies={reply.replies as Reply[]}
+                                    key={reply.id}
+                                    level={props.level + 1}
+                                />
+                            );
+                        },
+                    )}
+                </div>
+            )}
+            {showingReplyModal && (
+                <ReplyModal
+                    title={props.title || props.content}
+                    hideSelf={(): void => setShowingReplyModal(false)}
+                    _key={props.id}
+                    level={props.level}
+                />
+            )}
         </>
     );
 };

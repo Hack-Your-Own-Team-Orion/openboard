@@ -11,7 +11,6 @@ interface LoadingScreenState {
 }
 
 export default class LoadingScreen extends Component<LoadingScreenProps, LoadingScreenState> {
-
     constructor(props: LoadingScreenProps) {
         super(props);
 
@@ -22,7 +21,9 @@ export default class LoadingScreen extends Component<LoadingScreenProps, Loading
     }
 
     componentDidUpdate(prevProps: LoadingScreenProps): void {
-        if (prevProps === this.props) { return; }
+        if (prevProps === this.props) {
+            return;
+        }
         if (this.props.shouldFadeOut === true) {
             this.setState({
                 isFadingOut: true,
@@ -40,36 +41,45 @@ export default class LoadingScreen extends Component<LoadingScreenProps, Loading
             return null;
         }
 
-        return (
-            this.state.isFadingOut ?
-                <Spring
-                    from={{ opacity: 1 }}
-                    to={{ opacity: 0 }}
-                    config={{duration: 250}}
-                >
-                    {(props: object): React.ReactNode =>
-                        <div className={css(styles.root)} style={props}>
-                            <img src={process.env.PUBLIC_URL + "/Logo.svg"} alt="OpenBoard" height="64px"/>
-                            <p className={css(styles.brand)}><span className={css(styles.brandBolded)}>Open</span>Board</p>
+        return this.state.isFadingOut ? (
+            <Spring from={{ opacity: 1 }} to={{ opacity: 0 }} config={{ duration: 250 }}>
+                {(props: object): React.ReactNode => (
+                    <div className={css(styles.container)} style={props}>
+                        <div className={css(styles.root)}>
+                            <img src={process.env.PUBLIC_URL + "/Logo.svg"} alt="OpenBoard" height="64px" />
+                            <p className={css(styles.brand)}>
+                                <span className={css(styles.brandBolded)}>Open</span>Board
+                            </p>
                         </div>
-                    }
-                </Spring>
-            :
+                    </div>
+                )}
+            </Spring>
+        ) : (
+            <div className={css(styles.container)}>
                 <div className={css(styles.root)}>
-                    <img src={process.env.PUBLIC_URL + "/Logo.svg"} alt="OpenBoard" height="64px"/>
-                    <p className={css(styles.brand)}><span className={css(styles.brandBolded)}>Open</span>Board</p>
+                    <img src={process.env.PUBLIC_URL + "/Logo.svg"} alt="OpenBoard" height="64px" />
+                    <p className={css(styles.brand)}>
+                        <span className={css(styles.brandBolded)}>Open</span>Board
+                    </p>
                 </div>
+            </div>
         );
     }
-
 }
 
 const styles = StyleSheet.create({
+    container: {
+        position: "absolute",
+        left: 0,
+        top: 0,
+        width: "100%",
+        height: "100%",
+    },
     root: {
         zIndex: 500,
         backgroundColor: Colors.green,
         width: "100%",
-        height: "100vh",
+        height: "100%",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
