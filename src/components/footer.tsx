@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
         ":active": {
             height: "180px",
         },
+        width: "100%",
     },
 
     root: {
