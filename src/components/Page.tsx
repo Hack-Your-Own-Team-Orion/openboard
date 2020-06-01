@@ -51,7 +51,7 @@ export default class Page extends Component<PageProps, PageState> {
             this.setState({
                 hasFinishedLoading: true,
             });
-        }, 100);
+        }, 500);
     }
 
     render(): React.ReactNode {
