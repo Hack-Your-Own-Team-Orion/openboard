@@ -39,8 +39,8 @@ const styles = StyleSheet.create({
         cursor: "wait",
     },
     error: {
-        borderColor: "red",
-        color: "red",
+        borderColor: Colors.red,
+        color: Colors.red,
     },
 });
 
