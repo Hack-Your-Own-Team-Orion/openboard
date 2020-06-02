@@ -1,27 +1,34 @@
 import React, { Component } from "react";
 import { css, StyleSheet } from "aphrodite";
+
 import Colors from "../colors.global";
-import { Reply } from "../interface";
+import { Message } from "../interface";
 import { v4 as uuidv4 } from "uuid";
-import { usernameFromIp, colorFromUsername } from "../localFunctions/UsernameFunctions";
+import { colorFromUsername } from "../localFunctions/UsernameFunctions";
 import { addReply } from "../dataFunctions";
+import Button from "./Button";
 
 interface ReplyModalProps {
+    userhash: string;
     _key: string;
     title: string;
     level: number;
     hideSelf: () => void;
+    requestRefresh: () => Promise<void>;
 }
 interface ReplyModalState {
+    loading: boolean;
+    error: boolean;
     replyInput: string;
 }
 
 export default class ReplyModal extends Component<ReplyModalProps, ReplyModalState> {
-
     constructor(props: ReplyModalProps) {
         super(props);
 
         this.state = {
+            loading: false,
+            error: false,
             replyInput: "",
         };
 
@@ -34,26 +41,40 @@ export default class ReplyModal extends Component<ReplyModalProps, ReplyModalSta
         this.props.hideSelf();
     }
 
-    handleSubmit(): void {
-        const req = new XMLHttpRequest();
-        req.addEventListener("load", async (): Promise<void> => {
-            const lines = req.responseText.split("\n");
-            const ip = lines[2].slice(3);
-            const userHash: string = usernameFromIp(ip);
+    async handleSubmit() {
+        this.setState({ loading: true });
 
-            const newReply: Reply = {
-                id: uuidv4(),
-                content: this.state.replyInput,
-                userhash: userHash,
-                color: colorFromUsername(userHash),
-                replies: [],
-                level: this.props.level + 1,
-            };
+        const newReply: Message = {
+            id: uuidv4(),
+            content: this.state.replyInput,
+            userhash: this.props.userhash,
+            color: colorFromUsername(this.props.userhash),
+            replies: [],
+            level: this.props.level + 1,
+        };
+
+        try {
             await addReply("/pages/main", this.props._key, newReply);
+        } catch (error) {
+            console.error(error);
+            this.setState({
+                loading: false,
+                error: true,
+            });
+            setTimeout(() => {
+                this.setState({ error: false });
+            }, 1000);
+            return;
+        }
+
+        try {
+            await this.props.requestRefresh();
+        } catch (error) {
             window.location.reload(true);
-        });
-        req.open("GET", "https://www.cloudflare.com/cdn-cgi/trace");
-        req.send();
+        }
+
+        this.setState({ loading: false, error: false });
+        this.hideSelf();
     }
 
     onInputChange(e: any): void {
@@ -65,34 +86,49 @@ export default class ReplyModal extends Component<ReplyModalProps, ReplyModalSta
 
     render(): React.ReactNode {
         return (
-            <div className={css(styles.root)}>
-                <div className={css(styles.topBar)}>
-                    <h3>Reply to "<i>{this.props.title}</i>"</h3>
-                    <button className={css(styles.closeButton)} onClick={this.hideSelf}>Close</button>
+            <div className={css(styles.rootContainer)}>
+                <div className={css(styles.root)}>
+                    <div className={css(styles.topBar)}>
+                        <h3>
+                            Reply to "<i>{this.props.title}</i>"
+                        </h3>
+                        <button className={css(styles.closeButton)} onClick={this.hideSelf}>
+                            Close
+                        </button>
+                    </div>
+                    <div className={css(styles.textareaContainer)}>
+                        <textarea
+                            placeholder="Reply content"
+                            name="replyInput"
+                            id="replyInput"
+                            className={css(styles.textArea)}
+                            onChange={this.onInputChange}
+                        />
+                    </div>
+                    <div>
+                        <Button text="Post Reply" loading={this.state.loading} error={this.state.error} onClick={this.handleSubmit} />
+                    </div>
                 </div>
-
-                <textarea
-                    name="replyInput"
-                    id="replyInput"
-                    className={css(styles.textArea)}
-                    onChange={this.onInputChange}
-                />
-                <button className={css(styles.submitButton)} onClick={this.handleSubmit}>Post Reply</button>
             </div>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    root: {
+    rootContainer: {
         zIndex: 100,
         position: "fixed",
         top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-
-        width: "80vw",
+        padding: "0 16px",
+        transform: "translate(0, -50%)",
+        left: 0,
+        right: 0,
+    },
+    root: {
+        maxWidth: "1140px",
+        width: "100%",
         height: "300px",
+        margin: "0 auto",
 
         backgroundColor: "#F2F2F2",
 
@@ -101,6 +137,8 @@ const styles = StyleSheet.create({
         border: `2px solid ${Colors.green}`,
 
         fontFamily: "'Ubuntu', sans-serif",
+        display: "flex",
+        flexDirection: "column",
     },
 
     topBar: {
@@ -116,28 +154,17 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
 
-    submitButton: {
-        border: `2px solid ${Colors.green}`,
-        color: Colors.green,
-        margin: "10px 0 0 2.5%",
-        cursor: "pointer",
-        borderRadius: 5,
-        padding: "5px 10px",
-        transition: "all .1s ease-in-out",
-
-        ":hover": {
-            transform: "translateY(-2px) scale(1.05)",
-            scale: "scale(1.1)",
-        },
+    textareaContainer: {
+        flex: "1 0 auto",
+        padding: "20px 0",
     },
 
     textArea: {
         resize: "none",
-        width: "95%",
-        height: "60%",
-        margin: "20px 0 0 2.5%",
         borderRadius: 5,
         padding: "10px",
+        width: "100%",
+        height: "100%",
         border: `1px solid ${"#BABABA"}`,
         whiteSpace: "normal",
     },

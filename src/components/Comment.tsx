@@ -1,10 +1,14 @@
 import React, { FunctionComponent } from "react";
 import { css, StyleSheet } from "aphrodite";
-import { Reply, Thread } from "../interface";
+import { Message } from "../interface";
 import { condensedUsername } from "../localFunctions/UsernameFunctions";
 import ReplyModal from "./ReplyModal";
 
-const Comment: FunctionComponent<Reply | Thread> = (props: Reply | Thread): React.ReactElement => {
+type CommentProps = Message & {
+    requestRefresh: () => Promise<void>;
+};
+
+const Comment: FunctionComponent<CommentProps> = (props): React.ReactElement => {
     const miniUsername = condensedUsername(props.userhash);
     const [showReplies, setShowReplies] = React.useState(props.level < 5 ? true : false);
     const [username, setUsername] = React.useState(miniUsername);
@@ -86,15 +90,16 @@ const Comment: FunctionComponent<Reply | Thread> = (props: Reply | Thread): Reac
             {props.replies && showReplies && (
                 <div>
                     {props.replies.map(
-                        (reply: Reply): React.ReactNode => {
+                        (reply): React.ReactNode => {
                             return (
                                 <Comment
+                                    requestRefresh={props.requestRefresh}
                                     id={reply.id}
                                     title={reply.title}
                                     color={reply.color}
                                     content={reply.content}
                                     userhash={reply.userhash}
-                                    replies={reply.replies as Reply[]}
+                                    replies={reply.replies}
                                     key={reply.id}
                                     level={props.level + 1}
                                 />
@@ -105,6 +110,8 @@ const Comment: FunctionComponent<Reply | Thread> = (props: Reply | Thread): Reac
             )}
             {showingReplyModal && (
                 <ReplyModal
+                    requestRefresh={props.requestRefresh}
+                    userhash={props.userhash}
                     title={props.title || props.content}
                     hideSelf={(): void => setShowingReplyModal(false)}
                     _key={props.id}

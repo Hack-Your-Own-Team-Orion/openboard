@@ -10,22 +10,12 @@
  * ID:
  */
 
-export interface Reply {
+export interface Message {
     title?: string;
     userhash: string;
     content: string;
     color: string;
-    replies?: Reply[];
-    id: string;
-    level?: number;
-}
-
-export interface Thread {
-    title?: string;
-    userhash: string;
-    content: string;
-    color: string;
-    replies?: Reply[];
+    replies?: Message[];
     id: string;
     level?: number;
 }
