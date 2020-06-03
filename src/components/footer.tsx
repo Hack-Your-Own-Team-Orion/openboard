@@ -45,44 +45,51 @@ export default class Footer extends Component<FooterProps, FooterState> {
     async handleSubmit(): Promise<void> {
         this.setState({ loading: true });
 
-        const newThread: Message = {
-            id: uuidv4(),
-            title: this.state.currentTitleInput,
-            content: this.state.currentInput,
-            userhash: this.props.userHash,
-            color: colorFromUsername(this.props.userHash),
-            replies: [],
-            level: 1,
-        };
-
-        try {
-            await addThread(this.props.page, newThread);
-            await this.props.requestRefresh();
-        } catch (error) {
-            console.error(error);
+        if (this.state.currentInput === "" || this.state.currentTitleInput === "") {
             this.setState({
                 loading: false,
                 error: true,
+            }, (): void => alert("Please fill out all fields!"));
+        } else {
+            const newThread: Message = {
+                id: uuidv4(),
+                title: this.state.currentTitleInput,
+                content: this.state.currentInput,
+                userhash: this.props.userHash,
+                color: colorFromUsername(this.props.userHash),
+                replies: [],
+                level: 1,
+            };
+
+            try {
+                await addThread(this.props.page, newThread);
+                this.props.requestRefresh();
+            } catch (error) {
+                console.error(error);
+                this.setState({
+                    loading: false,
+                    error: true,
+                });
+                setTimeout((): void => {
+                    this.setState({ error: false });
+                }, 1000);
+                return;
+            }
+
+            this.setState({
+                error: false,
+                loading: false,
+                currentInput: "",
+                currentTitleInput: "",
             });
-            setTimeout(() => {
-                this.setState({ error: false });
-            }, 1000);
-            return;
+
+            // For cross browser
+            const body = document.body;
+            const html = document.documentElement;
+            const height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+
+            window.scrollTo(0, height);
         }
-
-        this.setState({
-            error: false,
-            loading: false,
-            currentInput: "",
-            currentTitleInput: "",
-        });
-
-        // For cross browser
-        const body = document.body;
-        const html = document.documentElement;
-        const height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-
-        window.scrollTo(0, height);
     }
 
     render(): React.ReactNode {

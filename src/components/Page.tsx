@@ -70,7 +70,7 @@ export default class Page extends Component<PageProps, PageState> {
                 <div className={css(styles.internalContent)}>
                     {!this.state.data.length && <h3>This page is empty. Fill the void by starting a thread at the bottom of the page!</h3>}
                     {this.state.data.map(
-                        (reply): React.ReactNode => {
+                        (reply: Message): React.ReactNode => {
                             return (
                                 <Comment
                                     requestRefresh={this.requestRefresh}
