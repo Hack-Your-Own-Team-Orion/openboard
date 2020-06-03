@@ -41,40 +41,47 @@ export default class ReplyModal extends Component<ReplyModalProps, ReplyModalSta
         this.props.hideSelf();
     }
 
-    async handleSubmit() {
+    async handleSubmit(): Promise<void> {
         this.setState({ loading: true });
 
-        const newReply: Message = {
-            id: uuidv4(),
-            content: this.state.replyInput,
-            userhash: this.props.userhash,
-            color: colorFromUsername(this.props.userhash),
-            replies: [],
-            level: this.props.level + 1,
-        };
-
-        try {
-            await addReply("/pages/main", this.props._key, newReply);
-        } catch (error) {
-            console.error(error);
+        if (this.state.replyInput === "" || this.state.replyInput === null) {
             this.setState({
                 loading: false,
                 error: true,
-            });
-            setTimeout(() => {
-                this.setState({ error: false });
-            }, 1000);
-            return;
-        }
+            }, (): void => alert("Please fill out the reply field!"));
+        } else {
+            const newReply: Message = {
+                id: uuidv4(),
+                content: this.state.replyInput,
+                userhash: this.props.userhash,
+                color: colorFromUsername(this.props.userhash),
+                replies: [],
+                level: this.props.level + 1,
+            };
 
-        try {
-            await this.props.requestRefresh();
-        } catch (error) {
-            window.location.reload(true);
-        }
+            try {
+                await addReply("/pages/main", this.props._key, newReply);
+            } catch (error) {
+                console.error(error);
+                this.setState({
+                    loading: false,
+                    error: true,
+                });
+                setTimeout((): void => {
+                    this.setState({ error: false });
+                }, 1000);
+                return;
+            }
 
-        this.setState({ loading: false, error: false });
-        this.hideSelf();
+            try {
+                await this.props.requestRefresh();
+            } catch (error) {
+                window.location.reload(true);
+            }
+
+            this.setState({ loading: false, error: false });
+            this.hideSelf();
+        }
     }
 
     onInputChange(e: any): void {

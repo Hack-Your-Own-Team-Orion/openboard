@@ -10,7 +10,7 @@ interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
     error: boolean;
 }
 
-const Button: React.FunctionComponent<ButtonProps> = (props) => {
+const Button: React.FunctionComponent<ButtonProps> = (props: ButtonProps): React.ReactElement => {
     const { loading, error, text, className, ...rest } = props;
 
     return (

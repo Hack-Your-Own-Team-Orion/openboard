@@ -8,7 +8,7 @@ type CommentProps = Message & {
     requestRefresh: () => Promise<void>;
 };
 
-const Comment: FunctionComponent<CommentProps> = (props): React.ReactElement => {
+const Comment: FunctionComponent<CommentProps> = (props: CommentProps): React.ReactElement => {
     const miniUsername = condensedUsername(props.userhash);
     const [showReplies, setShowReplies] = React.useState(props.level < 5 ? true : false);
     const [username, setUsername] = React.useState(miniUsername);
@@ -90,7 +90,7 @@ const Comment: FunctionComponent<CommentProps> = (props): React.ReactElement => 
             {props.replies && showReplies && (
                 <div>
                     {props.replies.map(
-                        (reply): React.ReactNode => {
+                        (reply: Message): React.ReactNode => {
                             return (
                                 <Comment
                                     requestRefresh={props.requestRefresh}
