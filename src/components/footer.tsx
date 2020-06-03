@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import { css, StyleSheet } from "aphrodite";
-import Colors from "../colors.global";
-import { Thread } from "../interface";
-import { colorFromUsername } from "../localFunctions/UsernameFunctions";
 import { v4 as uuidv4 } from "uuid";
+
+import Colors from "../colors.global";
+import { Message } from "../interface";
+import { colorFromUsername } from "../localFunctions/UsernameFunctions";
 import { addThread } from "../dataFunctions";
+import Button from "./Button";
 
 interface FooterProps {
     userHash: string;
@@ -12,21 +14,24 @@ interface FooterProps {
     requestRefresh: () => void;
 }
 interface FooterState {
+    loading: boolean;
+    error: boolean;
     currentInput: string;
     currentTitleInput: string;
 }
 
 export default class Footer extends Component<FooterProps, FooterState> {
-
     constructor(props: FooterProps) {
         super(props);
 
         this.state = {
+            loading: false,
+            error: false,
             currentInput: "",
             currentTitleInput: "",
         };
 
-        this.handleSubmit  = this.handleSubmit.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
     }
 
@@ -38,7 +43,9 @@ export default class Footer extends Component<FooterProps, FooterState> {
     }
 
     async handleSubmit(): Promise<void> {
-        const newThread: Thread = {
+        this.setState({ loading: true });
+
+        const newThread: Message = {
             id: uuidv4(),
             title: this.state.currentTitleInput,
             content: this.state.currentInput,
@@ -47,53 +54,83 @@ export default class Footer extends Component<FooterProps, FooterState> {
             replies: [],
             level: 1,
         };
-        await addThread(this.props.page, newThread);
-        this.props.requestRefresh();
+
+        try {
+            await addThread(this.props.page, newThread);
+            await this.props.requestRefresh();
+        } catch (error) {
+            console.error(error);
+            this.setState({
+                loading: false,
+                error: true,
+            });
+            setTimeout(() => {
+                this.setState({ error: false });
+            }, 1000);
+            return;
+        }
+
+        this.setState({
+            error: false,
+            loading: false,
+            currentInput: "",
+            currentTitleInput: "",
+        });
+
+        // For cross browser
+        const body = document.body;
+        const html = document.documentElement;
+        const height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+
+        window.scrollTo(0, height);
     }
 
     render(): React.ReactNode {
         return (
-            <div className={css(styles.root)}>
-                <div className={css(styles.inputs)}>
-                    <input
-                        type="text"
-                        name="currentTitleInput"
-                        id="currentTitleInput"
-                        className={css(styles.titleInput)}
-                        placeholder="Write a new Thread - Title"
-                        onChange={this.onInputChange}
-                    />
-                    <textarea
-                        name="currentInput"
-                        id="currentInput"
-                        autoCorrect="false"
-                        className={css(styles.textArea)}
-                        placeholder="New Thread's content"
-                        onChange={this.onInputChange}
-                    />
+            <div className={css(styles.rootContainer)}>
+                <div className={css(styles.root)}>
+                    <div className={css(styles.inputs)}>
+                        <input
+                            type="text"
+                            name="currentTitleInput"
+                            id="currentTitleInput"
+                            value={this.state.currentTitleInput}
+                            className={css(styles.titleInput)}
+                            placeholder="Write a new Thread - Title"
+                            onChange={this.onInputChange}
+                        />
+                        <textarea
+                            name="currentInput"
+                            id="currentInput"
+                            autoCorrect="false"
+                            value={this.state.currentInput}
+                            className={css(styles.textArea)}
+                            placeholder="New Thread's content"
+                            onChange={this.onInputChange}
+                        />
+                    </div>
+                    <div className={css(styles.buttons)}>
+                        <Button onClick={this.handleSubmit} loading={this.state.loading} error={this.state.error} text="Submit" />
+                        {/* <button className={css(styles.button)} onClick={this.handleSubmit}>
+                            Submit
+                        </button> */}
+                    </div>
                 </div>
-                <button className={css(styles.button)} onClick={this.handleSubmit}>Submit</button>
             </div>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    root: {
-        backgroundColor: "#F2F2F2",
+    rootContainer: {
         position: "fixed",
         bottom: "0",
-        width: "100vw",
-        textAlign: "center",
-        height: "80px",
+        left: "0",
+        right: "0",
         borderTop: `3px solid ${Colors.green}`,
-        transition: "all .1s ease-in-out",
-        fontFamily: "'Ubuntu', sans-serif",
-
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
+        backgroundColor: "#F2F2F2",
+        height: "110px",
+        transition: "height .1s ease-in-out",
 
         ":hover": {
             height: "180px",
@@ -104,44 +141,47 @@ const styles = StyleSheet.create({
         },
     },
 
+    root: {
+        margin: "0 auto",
+        maxWidth: "1140px",
+        width: "100%",
+        textAlign: "center",
+        height: "100%",
+        transition: "all .1s ease-in-out",
+        fontFamily: "'Ubuntu', sans-serif",
+        display: "flex",
+    },
+
     textArea: {
+        padding: "4px",
         resize: "none",
         borderRadius: 5,
         border: `1px solid ${"#BABABA"}`,
         whiteSpace: "normal",
-        width: "100%",
-        flex: 1,
+        flex: "1 0 auto",
         fontFamily: "'Open Sans'",
     },
 
     inputs: {
-        height: "80%",
-        width: "90%",
+        height: "100%",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
+        flex: "1 0 auto",
+        padding: "16px",
     },
 
     titleInput: {
+        padding: "4px",
         borderRadius: 5,
         border: `1px solid ${"#BABABA"}`,
-        width: "100%",
         fontFamily: "'Open Sans'",
         marginBottom: "5px",
     },
 
-    button: {
-        border: `2px solid ${Colors.green}`,
-        color: Colors.green,
-        marginLeft: "10px",
-        cursor: "pointer",
-        borderRadius: 5,
-        padding: "5px 10px",
-        transition: "all .1s ease-in-out",
-
-        ":hover": {
-            transform: "translateY(-2px) scale(1.05)",
-            scale: "scale(1.1)",
-        },
+    buttons: {
+        height: "100%",
+        paddingRight: "16px",
+        display: "flex",
+        alignItems: "center",
     },
 });

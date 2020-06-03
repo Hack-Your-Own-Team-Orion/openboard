@@ -3,7 +3,7 @@ import { css, StyleSheet } from "aphrodite";
 import Footer from "./footer";
 import LoadingScreen from "./loadingScreen";
 import Colors from "../colors.global";
-import { Reply } from "../interface";
+import { Message } from "../interface";
 import firebase from "../firebase";
 import Comment from "./Comment";
 
@@ -14,22 +14,21 @@ interface PageProps {
 
 interface PageState {
     hasFinishedLoading: boolean;
-    data: Reply[];
+    data: Message[];
 }
 
 const firestore = firebase.firestore();
 
 export default class Page extends Component<PageProps, PageState> {
-
     constructor(props: PageProps) {
         super(props);
 
         this.state = {
             hasFinishedLoading: false,
-            data: Array<Reply>(),
+            data: Array<Message>(),
         };
 
-        this.finishLoading  = this.finishLoading.bind(this);
+        this.finishLoading = this.finishLoading.bind(this);
         this.requestRefresh = this.requestRefresh.bind(this);
     }
 
@@ -41,7 +40,7 @@ export default class Page extends Component<PageProps, PageState> {
     async requestRefresh(): Promise<void> {
         const document = firestore.doc(this.props.collection);
         const data = (await document.get()).data();
-        const threads: Reply[] = data.threads;
+        const threads: Message[] = data.threads;
         this.setState({
             data: threads,
         });
@@ -52,35 +51,41 @@ export default class Page extends Component<PageProps, PageState> {
             this.setState({
                 hasFinishedLoading: true,
             });
-        }, 100);
+        }, 500);
     }
 
     render(): React.ReactNode {
         return (
             <>
                 <LoadingScreen shouldFadeOut={this.state.hasFinishedLoading} />
-
-                <div className={css(styles.title)}>
-                    <h1>Welcome to /{this.props.collection.slice(6)}, &lt;{this.props.userHash}&gt;</h1>
-                    {JSON.stringify(this.state.data) === "[]" && (
-                        <h3 className={css(styles.subtitle)}>
-                            This page is empty. Fill the void by starting a thread at the bottom of the page!
-                        </h3>
-                    )}
-                </div>
+                <h1 className={css(styles.title)}>
+                    <div className={css(styles.welcome)}>Welcome to /{this.props.collection.slice(6)},&nbsp;</div>
+                    <div className={css(styles.userHashContainer)}>
+                        <div className={css(styles.lt)}>&lt;</div>
+                        <div className={css(styles.userHash)}>{this.props.userHash}</div>
+                        <div className={css(styles.gt)}>&gt;</div>
+                    </div>
+                </h1>
 
                 <div className={css(styles.internalContent)}>
-                    {this.state.data.map((reply: Reply): React.ReactNode => {
-                        return <Comment
-                            id={reply.id}
-                            title={reply.title}
-                            color={reply.color}
-                            content={reply.content}
-                            userhash={reply.userhash}
-                            replies={reply.replies}
-                            key={reply.id}
-                            level={1} />;
-                    })}
+                    {!this.state.data.length && <h3>This page is empty. Fill the void by starting a thread at the bottom of the page!</h3>}
+                    {this.state.data.map(
+                        (reply): React.ReactNode => {
+                            return (
+                                <Comment
+                                    requestRefresh={this.requestRefresh}
+                                    id={reply.id}
+                                    title={reply.title}
+                                    color={reply.color}
+                                    content={reply.content}
+                                    userhash={reply.userhash}
+                                    replies={reply.replies}
+                                    key={reply.id}
+                                    level={1}
+                                />
+                            );
+                        },
+                    )}
                 </div>
                 <Footer userHash={this.props.userHash} page={this.props.collection} requestRefresh={this.requestRefresh} />
             </>
@@ -92,15 +97,50 @@ const styles = StyleSheet.create({
     title: {
         color: Colors.green,
         fontFamily: "'Ubuntu', sans-serif",
-        margin: "40px 0 40px 10%",
+        padding: "20px 16px",
+        maxWidth: "1140px",
+        margin: "0 auto",
+        fontSize: "1.75em",
+        "@media (min-width: 700px)": {
+            fontSize: "2em",
+            padding: "40px 16px",
+        },
+    },
+    welcome: {
+        display: "block",
+        "@media (min-width: 700px)": {
+            display: "inline-block",
+        },
+    },
+    userHashContainer: {
+        display: "flex",
+        "@media (min-width: 700px)": {
+            display: "inline-flex",
+        },
+    },
+    lt: {
+        width: "20px",
+        textAlign: "center",
+        display: "inline-block",
+    },
+    userHash: {
+        maxWidth: "calc(100% - 40px)",
+        display: "inline-block",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+    },
+    gt: {
+        width: "20px",
+        textAlign: "center",
+        display: "inline-block",
     },
     internalContent: {
-        width: "80%",
-        marginLeft: "10%",
-        marginBottom: "100px",
-    },
-
-    subtitle: {
-        marginTop: "20px",
+        fontFamily: "'Open Sans', sans-serif",
+        maxWidth: "1140px",
+        width: "100%",
+        margin: "0 auto",
+        padding: "0 16px 16px",
+        marginBottom: "110px",
     },
 });

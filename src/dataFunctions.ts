@@ -1,16 +1,13 @@
 import firebase from "./firebase";
-import { Reply, Thread } from "./interface";
+import { Message } from "./interface";
 import Queue from "./queue";
 
 const firestore = firebase.firestore();
 
-export async function addThread(page: string, threadData: Reply | Thread): Promise<void> {
+export async function addThread(page: string, threadData: Message): Promise<void> {
     const doc = firestore.doc(page);
     const currentData = (await doc.get()).data();
-    const newThreads = [
-        ...currentData.threads,
-        threadData,
-    ];
+    const newThreads = [...currentData.threads, threadData];
 
     doc.update({
         threads: newThreads,
@@ -18,10 +15,10 @@ export async function addThread(page: string, threadData: Reply | Thread): Promi
 }
 
 interface ThreadData {
-    threads: Reply[];
+    threads: Message[];
 }
 
-function addCommentToThread(page: any, insertAt: string, newReply: Reply): ThreadData {
+function addCommentToThread(page: any, insertAt: string, newReply: Message): ThreadData {
     const threads = page.threads;
     const q = new Queue();
     for (const thread of threads) {
@@ -29,7 +26,7 @@ function addCommentToThread(page: any, insertAt: string, newReply: Reply): Threa
     }
 
     while (!q.isEmpty()) {
-        const current: Reply = q.dequeue();
+        const current: Message = q.dequeue();
 
         if (current.id === insertAt) {
             if (!current.hasOwnProperty("replies")) {
@@ -50,7 +47,7 @@ function addCommentToThread(page: any, insertAt: string, newReply: Reply): Threa
     };
 }
 
-export async function addReply(page: string, id: string, newReply: Reply): Promise<void> {
+export async function addReply(page: string, id: string, newReply: Message): Promise<void> {
     const doc = firestore.doc(page);
     const currentData = (await doc.get()).data();
     const newData = addCommentToThread(currentData, id, newReply);
