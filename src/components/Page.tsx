@@ -3,7 +3,7 @@ import { css, StyleSheet } from "aphrodite";
 import Footer from "./footer";
 import LoadingScreen from "./loadingScreen";
 import Colors from "../colors.global";
-import { Reply } from "../interface";
+import { Message } from "../interface";
 import firebase from "../firebase";
 import Comment from "./Comment";
 
@@ -14,7 +14,7 @@ interface PageProps {
 
 interface PageState {
     hasFinishedLoading: boolean;
-    data: Reply[];
+    data: Message[];
 }
 
 const firestore = firebase.firestore();
@@ -25,7 +25,7 @@ export default class Page extends Component<PageProps, PageState> {
 
         this.state = {
             hasFinishedLoading: false,
-            data: Array<Reply>(),
+            data: Array<Message>(),
         };
 
         this.finishLoading = this.finishLoading.bind(this);
@@ -40,7 +40,7 @@ export default class Page extends Component<PageProps, PageState> {
     async requestRefresh(): Promise<void> {
         const document = firestore.doc(this.props.collection);
         const data = (await document.get()).data();
-        const threads: Reply[] = data.threads;
+        const threads: Message[] = data.threads;
         this.setState({
             data: threads,
         });
@@ -70,9 +70,10 @@ export default class Page extends Component<PageProps, PageState> {
                 <div className={css(styles.internalContent)}>
                     {!this.state.data.length && <h3>This page is empty. Fill the void by starting a thread at the bottom of the page!</h3>}
                     {this.state.data.map(
-                        (reply: Reply): React.ReactNode => {
+                        (reply: Message): React.ReactNode => {
                             return (
                                 <Comment
+                                    requestRefresh={this.requestRefresh}
                                     id={reply.id}
                                     title={reply.title}
                                     color={reply.color}
