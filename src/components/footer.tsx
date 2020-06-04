@@ -157,17 +157,6 @@ const styles = StyleSheet.create({
         display: "flex",
     },
 
-    root: {
-        margin: "0 auto",
-        maxWidth: "1140px",
-        width: "100%",
-        textAlign: "center",
-        height: "100%",
-        transition: "all .1s ease-in-out",
-        fontFamily: "'Ubuntu', sans-serif",
-        display: "flex",
-    },
-
     textArea: {
         padding: "4px",
         resize: "none",
