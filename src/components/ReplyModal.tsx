@@ -161,6 +161,14 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
 
+    submitButton: {
+        border: `2px solid ${Colors.green}`,
+        color: Colors.green,
+        margin: "10px 0 0 2.5%",
+        cursor: "pointer",
+        borderRadius: 5,
+    },
+
     textareaContainer: {
         flex: "1 0 auto",
         padding: "20px 0",

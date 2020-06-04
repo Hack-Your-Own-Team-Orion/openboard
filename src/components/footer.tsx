@@ -118,9 +118,6 @@ export default class Footer extends Component<FooterProps, FooterState> {
                     </div>
                     <div className={css(styles.buttons)}>
                         <Button onClick={this.handleSubmit} loading={this.state.loading} error={this.state.error} text="Submit" />
-                        {/* <button className={css(styles.button)} onClick={this.handleSubmit}>
-                            Submit
-                        </button> */}
                     </div>
                 </div>
             </div>
@@ -146,6 +143,18 @@ const styles = StyleSheet.create({
         ":active": {
             height: "180px",
         },
+        width: "100%",
+    },
+
+    root: {
+        margin: "0 auto",
+        maxWidth: "1140px",
+        width: "100%",
+        textAlign: "center",
+        height: "100%",
+        transition: "all .1s ease-in-out",
+        fontFamily: "'Ubuntu', sans-serif",
+        display: "flex",
     },
 
     root: {
